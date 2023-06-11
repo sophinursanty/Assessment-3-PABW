@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Data Obat</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css">
+  <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>
+  
+  <style>
+    /* Menambahkan jarak antara form dan datatable */
+    #add-form, #data-table {
+      margin-bottom: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="mt-5">Tambah Data Obat</h1>
+
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-6">
+        <form id="add-form">
+          <div class="mb-3">
+            <label for="id" class="form-label">ID:</label>
+            <input type="text" id="id" name="id" required class="form-control">
+          </div>
+      
+          <div class="mb-3">
+            <label for="nama" class="form-label">Nama:</label>
+            <input type="text" id="nama" name="nama" required class="form-control">
+          </div>
+      
+          <div class="mb-3">
+            <label for="jumlah" class="form-label">Jumlah:</label>
+            <input type="number" id="jumlah" name="jumlah" required class="form-control">
+          </div>
+      
+          <div class="mb-3">
+            <label for="tanggal" class="form-label">Tanggal Kedaluwarsa:</label>
+            <input type="text" id="tanggal" name="tanggal" required class="form-control">
+          </div>
+      
+          <div class="mb-3">
+            <label for="deskripsi" class="form-label">Deskripsi:</label>
+            <input type="text" id="deskripsi" name="deskripsi" required class="form-control">
+          </div>
+      
+          <div class="mb-3">
+            <label for="harga" class="form-label">Harga:</label>
+            <input type="number" id="harga" name="harga" required class="form-control">
+          </div>
+      
+          <input type="submit" value="Tambahkan Data" class="btn btn-primary">
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <table id="data-table" class="table table-striped table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nama</th>
+          <th>Jumlah</th>
+          <th>Tanggal Kedaluwarsa</th>
+          <th>Deskripsi</th>
+          <th>Harga</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      // Inisialisasi DataTables
+      var table = $('#data-table').DataTable({
+        "language": {
+          "url": "https://cdn.datatables.net/plug-ins/1.11.3/i18n/Indonesian.json"
+        }
+      });
+
+      // Memuat data dari file JSON
+      $.ajax({
+        url: 'data.json',
+        dataType: 'json',
+        success: function(data) {
+          $.each(data.obat, function(index, obat) {
+            var row = [
+              obat.id,
+              obat.nama,
+              obat.jumlah,
+              obat.tanggal_kedaluwarsa,
+              obat.deskripsi,
+              obat.harga,
+              '<button class="edit-btn btn btn-primary">Edit</button> <button class="delete-btn btn btn-danger">Hapus</button>'
+            ];
+
+            table.row.add(row).draw();
+          });
+        }
+      });
+
+      // Validasi form menggunakan jQuery Form Validation
+      $('#add-form').validate({
+        rules: {
+          id: 'required',
+          nama: 'required',
+          jumlah: {
+            required: true,
+            digits: true
+          },
+          tanggal: 'required',
+          deskripsi: 'required',
+          harga: {
+            required: true,
+            number: true
+          }
+        },
+        messages: {
+          id: 'ID harus diisi',
+          nama: 'Nama harus diisi',
+          jumlah: {
+            required: 'Jumlah harus diisi',
+            digits: 'Jumlah harus berupa angka'
+          },
+          tanggal: 'Tanggal kedaluwarsa harus diisi',
+          deskripsi: 'Deskripsi harus diisi',
+          harga: {
+            required: 'Harga harus diisi',
+            number: 'Harga harus berupa angka'
+          }
+        },
+        submitHandler: function(form) {
+          // Mendapatkan nilai input
+          var id = $('#id').val();
+          var nama = $('#nama').val();
+          var jumlah = $('#jumlah').val();
+          var tanggal = $('#tanggal').val();
+          var deskripsi = $('#deskripsi').val();
+          var harga = $('#harga').val();
+
+          // Menambahkan data ke dalam DataTables
+          var row = [
+            id,
+            nama,
+            jumlah,
+            tanggal,
+            deskripsi,
+            harga,
+            '<button class="edit-btn btn btn-primary">Edit</button> <button class="delete-btn btn btn-danger">Hapus</button>'
+          ];
+          table.row.add(row).draw();
+
+          // Mengosongkan nilai input
+          $('#id').val('');
+          $('#nama').val('');
+          $('#jumlah').val('');
+          $('#tanggal').val('');
+          $('#deskripsi').val('');
+          $('#harga').val('');
+        }
+      });
+
+      // Mengubah input tanggal menjadi datepicker menggunakan jQuery UI
+      $('#tanggal').datepicker({
+        dateFormat: 'yy-mm-dd'
+      });
+
+      // Handling aksi edit
+      $('#data-table').on('click', '.edit-btn', function() {
+        var data = table.row($(this).closest('tr')).data();
+        var id = data[0];
+        var nama = data[1];
+        var jumlah = data[2];
+        var tanggal = data[3];
+        var deskripsi = data[4];
+        var harga = data[5];
+
+        $('#id').val(id);
+        $('#nama').val(nama);
+        $('#jumlah').val(jumlah);
+        $('#tanggal').val(tanggal);
+        $('#deskripsi').val(deskripsi);
+        $('#harga').val(harga);
+
+        // Hapus baris data dari DataTables
+        table.row($(this).closest('tr')).remove().draw();
+      });
+
+      // Handling aksi hapus
+      $('#data-table').on('click', '.delete-btn', function() {
+        // Hapus baris data dari DataTables
+        table.row($(this).closest('tr')).remove().draw();
+      });
+    });
+  </script>
+</body>
+</html>

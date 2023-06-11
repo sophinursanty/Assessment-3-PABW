@@ -1,0 +1,29 @@
+{
+    "obat": [
+      {
+        "id": "001",
+        "nama": "Paracetamol",
+        "jumlah": 50,
+        "tanggal_kedaluwarsa": "2023-12-31",
+        "deskripsi": "Obat pereda demam dan nyeri ringan hingga sedang",
+        "harga": 1500
+      },
+      {
+        "id": "002",
+        "nama": "Amoxicillin",
+        "jumlah": 20,
+        "tanggal_kedaluwarsa": "2024-06-30",
+        "deskripsi": "Antibiotik untuk infeksi bakteri",
+        "harga": 3000
+      },
+      {
+        "id": "003",
+        "nama": "Loratadine",
+        "jumlah": 10,
+        "tanggal_kedaluwarsa": "2023-10-15",
+        "deskripsi": "Obat alergi dan antihistamin",
+        "harga": 2000
+      }
+    ]
+  }
+  
